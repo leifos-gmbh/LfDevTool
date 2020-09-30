@@ -45,7 +45,7 @@ class MetaBarProvider extends AbstractStaticMetaBarPluginProvider implements Sta
 
                             $DIC->ui()->factory()->legacy($this->getContent())
                         )
-                       ->withSymbol($f->symbol()->icon()->custom($icon_path, $title))
+                       ->withSymbol($f->symbol()->glyph()->settings())
                        ->withTitle($title)
                        ->withPosition(0);
 
