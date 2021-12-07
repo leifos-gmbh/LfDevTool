@@ -113,10 +113,10 @@ class MetaBarProvider extends AbstractStaticMetaBarPluginProvider implements Sta
             $hist = $ilCtrl->getCallHistory();
             foreach ($hist as $entry) {
                 $ftpl->setCurrentBlock("c_entry");
-                $ftpl->setVariable("C_ENTRY", $entry["class"]);
+                $ftpl->setVariable("C_ENTRY", $entry["class"] ?? $entry["cmdClass"]);
                 if (is_object($ilDB)) {
-                    $file = $ilCtrl->lookupClassPath($entry["class"]);
-                    $add = $entry["mode"] . " - " . $entry["cmd"];
+                    $file = $ilCtrl->lookupClassPath($entry["class"] ?? $entry["cmdClass"]);
+                    $add = ($entry["mode"] ?? $entry["cmdMode"]) . " - " . $entry["cmd"];
                     if ($file != "") {
                         $add.= " - " . $file;
                     }
