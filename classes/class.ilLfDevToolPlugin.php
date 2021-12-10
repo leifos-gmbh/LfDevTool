@@ -26,7 +26,7 @@ class ilLfDevToolPlugin extends ilUserInterfaceHookPlugin
     /**
      * @return string
      */
-    function getPluginName()
+    function getPluginName() : string
     {
         return "LfDevTool";
     }
