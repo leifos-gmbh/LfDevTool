@@ -81,8 +81,14 @@ class MetaBarProvider extends AbstractStaticMetaBarPluginProvider implements Sta
         $ilCtrl = $DIC->ctrl();
         $ilDB = $DIC->database();
 
+        $component_repository = $DIC["component.factory"] ?? null;
+
         /** @var \ilPlugin $plugin */
-        $plugin = $DIC["ilPluginAdmin"]->getPluginObjectById($this->getPluginID());
+        if (!is_null($component_repository)) {
+            $plugin = $component_repository->getPlugin($this->getPluginID());
+        } else {
+            $plugin = $DIC["ilPluginAdmin"]->getPluginObjectById($this->getPluginID());
+        }
 
         $ftpl = $plugin->getTemplate("tpl.dev_info.html");
 
