@@ -9,9 +9,11 @@
  */
 class ilLfDevToolPlugin extends ilUserInterfaceHookPlugin
 {
-    protected function init()
+    public function __construct()
     {
         global $DIC;
+
+        parent::__construct();
         $this->provider_collection->setMetaBarProvider(new \Leifos\DevTool\MetaBarProvider($DIC, $this));
     }
 
