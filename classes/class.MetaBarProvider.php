@@ -118,16 +118,26 @@ class MetaBarProvider extends AbstractStaticMetaBarPluginProvider implements Sta
             $ftpl->blockExists("call_history")) {
             $hist = $ilCtrl->getCallHistory();
             foreach ($hist as $entry) {
-                $ftpl->setCurrentBlock("c_entry");
-                $ftpl->setVariable("C_ENTRY", $entry["class"] ?? $entry["cmdClass"]);
-                if (is_object($ilDB)) {
-                    $file = $ilCtrl->lookupClassPath($entry["class"] ?? $entry["cmdClass"]);
-                    $add = ($entry["mode"] ?? $entry["cmdMode"]) . " - " . $entry["cmd"];
-                    if ($file != "") {
-                        $add.= " - " . $file;
-                    }
-                    $ftpl->setVariable("C_FILE", $add);
+                $class = $entry["class"] ?? $entry["cmdClass"];
+                $mode = $entry["mode"] ?? $entry["cmdMode"];
+                if ($mode == "execComm") {
+                    $mode = "executeCommand";
                 }
+                $cmd = $entry["cmd"];
+
+
+                $ftpl->setCurrentBlock("c_entry");
+                if (is_object($ilDB)) {
+                    $file = $ilCtrl->lookupClassPath($class);
+                    $file = str_replace($class, "<b>$class</b>", $file);
+                    $ftpl->setVariable("FILE", $file);
+                } else {
+                    $ftpl->setVariable("FILE", $class);
+                }
+                if (strtolower($ilCtrl->getCmdClass()) == strtolower($class)) {
+                    $mode.= " -> ". "<b>".$cmd."</b>";
+                }
+                $ftpl->setVariable("MODE", $mode);
                 $ftpl->parseCurrentBlock();
             }
             $ftpl->setCurrentBlock("call_history");
@@ -152,7 +162,7 @@ class MetaBarProvider extends AbstractStaticMetaBarPluginProvider implements Sta
             }
             foreach ($ifiles as $f) {
                 $ftpl->setCurrentBlock("i_entry");
-                $ftpl->setVariable("I_ENTRY", $f["file"] . " (" . $f["size"] . " Bytes, " . round(100 / $total * $f["size"], 2) . "%)");
+                $ftpl->setVariable("I_ENTRY", $this->getFilePresentation($f["file"]) . " (" . $f["size"] . " Bytes, " . round(100 / $total * $f["size"], 2) . "%)");
                 $ftpl->parseCurrentBlock();
             }
             $ftpl->setCurrentBlock("i_entry");
@@ -163,6 +173,14 @@ class MetaBarProvider extends AbstractStaticMetaBarPluginProvider implements Sta
         }
 
         return $ftpl->get();
+    }
+
+    protected function getFilePresentation($file)
+    {
+        if (str_starts_with($file, ILIAS_ABSOLUTE_PATH)) {
+            return substr($file, strlen(ILIAS_ABSOLUTE_PATH) + 1);
+        }
+        return $file;
     }
 
 }
