@@ -145,7 +145,11 @@ class MetaBarProvider extends AbstractStaticMetaBarPluginProvider implements Sta
                 $ifiles[] = array("file" => $f, "size" => filesize($f));
                 $total += filesize($f);
             }
-            $ifiles = \ilUtil::sortArray($ifiles, "size", "desc", true);
+            if (method_exists(\ilUtil::class, "sortArray")) {
+                $ifiles = \ilUtil::sortArray($ifiles, "size", "desc", true);
+            } else {
+                $ifiles = \ilArrayUtil::sortArray($ifiles, "size", "desc", true);
+            }
             foreach ($ifiles as $f) {
                 $ftpl->setCurrentBlock("i_entry");
                 $ftpl->setVariable("I_ENTRY", $f["file"] . " (" . $f["size"] . " Bytes, " . round(100 / $total * $f["size"], 2) . "%)");
